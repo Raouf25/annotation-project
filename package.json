@@ -1,0 +1,17 @@
+{
+  "name": "annotation-project",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "cropperjs": "^1.5.6",
+    "vue": "^3.0.4",
+    "vue-cropperjs": "^5.0.0"
+  },
+  "devDependencies": {
+    "@vue/compiler-sfc": "^3.0.4",
+    "vite": "^1.0.0-rc.13"
+  }
+}
