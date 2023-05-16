@@ -1,17 +1,22 @@
 <template>
   <div class="drop-zone" @dragover.prevent @drop="handleDrop">
     <p v-if="isVisible">{{ label }}</p>
-    <img v-else :src="uploadedImage.url" :alt="uploadedImage.name" class="uploaded-image" />
+    <img
+      v-else
+      :src="uploadedImage.url"
+      :alt="uploadedImage.name"
+      class="uploaded-image"
+    />
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { PropType } from 'vue';
+import { defineComponent } from "vue";
+import { PropType } from "vue";
 
-import { UploadedImage } from '../dtos/UploadedImage';
+import { UploadedImage } from "../dtos/UploadedImage";
 
 export default defineComponent({
-  name: 'DropZone',
+  name: "DropZone",
   props: {
     label: {
       type: String,
@@ -22,6 +27,7 @@ export default defineComponent({
       required: true,
     },
   },
+
   data() {
     return {
       isVisible: true,
@@ -41,7 +47,7 @@ export default defineComponent({
             file: file,
           };
           this.isVisible = false;
-          this.$emit('imageDropped', uploadedImage);
+          this.$emit("imageDropped", uploadedImage);
         };
         reader.readAsDataURL(file);
       }

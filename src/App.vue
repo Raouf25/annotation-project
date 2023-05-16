@@ -6,59 +6,55 @@
     </div>
     <hr />
 
- 
     <div class="content">
-      
       <section v-if="!showResultSection">
         <div class="drop-zone-container">
-          <DropZone :label="'Zone de dépôt 1'" :uploadedImage="uploadedImage1" @imageDropped="handleImageDropped1" />
+          <DropZone
+            :label="'Zone de dépôt 1'"
+            :uploadedImage="uploadedImage1"
+            @imageDropped="handleImageDropped1"
+          />
           <div class="drop-zone-divider"></div>
-          <DropZone :label="'Zone de dépôt 2'" :uploadedImage="uploadedImage2" @imageDropped="handleImageDropped2" />
-      </div>
-      <button
+          <DropZone
+            :label="'Zone de dépôt 2'"
+            :uploadedImage="uploadedImage2"
+            @imageDropped="handleImageDropped2"
+          />
+        </div>
+        <button
           @click="startAlgorithm"
           :disabled="!isButtonActive"
           class="start-button"
         >
           Start Analyse
         </button>
-
       </section>
-      
 
       <section class="cropper-area" v-if="showResultSection">
-        
-  
         <div class="img-cropper">
           <p>Image 1:</p>
+
           <vue-cropper
             ref="cropper"
-            :aspect-ratio="16 / 9"
-            :src="imgSrc"
+            :aspect-ratio="NaN"
+            :src="uploadedImage1.url"
             preview=".preview"
           />
           <p>Image 2:</p>
           <vue-cropper
-          ref="cropper2"
+            ref="cropper2"
             :aspect-ratio="16 / 9"
-            :src="imgSrc2"
+            :src="uploadedImage2.url"
             preview=".preview"
           />
         </div>
-       
       </section>
       <section class="preview-area" v-if="showResultSection">
         <p>Preview</p>
         <div class="preview" />
-        
+
         <div class="actions">
-          <a
-            href="#"
-            role="button"
-            @click.prevent="reset"
-          >
-            Reset
-          </a>
+          <a href="#" role="button" @click.prevent="reset"> Reset </a>
           <!--
 <a
             href="#"
@@ -75,7 +71,6 @@
             Set CropBox Data
           </a>
           -->
-          
         </div>
         <textarea v-model="data" />
       </section>
@@ -84,10 +79,10 @@
 </template>
 
 <script>
-import VueCropper from 'vue-cropperjs';
-import 'cropperjs/dist/cropper.css';
-import DropZone from './components/DropZone.vue';
-
+import VueCropper from "vue-cropperjs";
+import "cropperjs/dist/cropper.css";
+import DropZone from "./components/DropZone.vue";
+import { callWebService } from "./services/webServices";
 
 export default {
   components: {
@@ -96,22 +91,18 @@ export default {
   },
   data() {
     return {
-     // imgSrc: '/assets/images/berserk.jpg',
-     // imgSrc2: '/assets/images/image2.jpeg',
-      imgSrc: '/assets/images/left.png',
-      imgSrc2: '/assets/images/right.png',
-      cropImg: '',
       data: null,
       showResultSection: false,
       uploadedImage1: null,
       uploadedImage2: null,
       isButtonActive: false,
+      processedImage1: null,
     };
   },
   methods: {
     getCropBoxData() {
       this.data = JSON.stringify(this.$refs.cropper.getCropBoxData(), null, 4);
-    }, 
+    },
     reset() {
       this.$refs.cropper.reset();
       this.$refs.cropper2.reset();
@@ -119,7 +110,7 @@ export default {
     setCropBoxData() {
       if (!this.data) return;
       this.$refs.cropper.setCropBoxData(JSON.parse(this.data));
-    }, 
+    },
 
     handleImageDropped1(image) {
       this.uploadedImage1 = image;
@@ -132,14 +123,46 @@ export default {
     },
 
     checkButtonActivation() {
-    this.isButtonActive =
-      this.uploadedImage1 !== null && this.uploadedImage2 !== null;
+      this.isButtonActive =
+        this.uploadedImage1 !== null && this.uploadedImage2 !== null;
     },
 
-    startAlgorithm(){
-      console.log("startAlgorithm")
+    drawDotsOnImage(image, points) {
+      // Créer un nouveau canvas pour dessiner l'image et les points
+      const canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+
+      // Dessiner l'image sur le canvas
+      const context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+      // Dessiner les points sur le canvas
+      context.fillStyle = "red";
+      points.forEach((point) => {
+        context.beginPath();
+        context.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+        context.fill();
+      });
+
+      // Convertir le canvas en une image et la retourner
+      const processedImage = new Image();
+      processedImage.src = canvas.toDataURL();
+      return processedImage;
+    },
+
+    startAlgorithm() {
+      callWebService(this.uploadedImage1.file, this.uploadedImage2.file)
+        .then((points) => {
+          console.log(points);
+          // Faites ce que vous voulez avec les résultats ici
+        })
+        .catch((error) => {
+          // Gérez l'erreur ici
+        });
+
       this.showResultSection = true;
-    }
+    },
   },
 };
 </script>
@@ -173,7 +196,6 @@ body {
   justify-content: space-between;
 }
 
-
 .drop-zone-container {
   display: flex;
   padding: 20px;
@@ -202,7 +224,7 @@ body {
 .actions a {
   display: inline-block;
   padding: 5px 15px;
-  background: #0062CC;
+  background: #0062cc;
   color: white;
   text-decoration: none;
   border-radius: 3px;
