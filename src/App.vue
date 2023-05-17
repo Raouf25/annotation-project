@@ -31,8 +31,8 @@
       </section>
 
       <div v-if="showResultSection">
-        <DrawPoint :imageSrc="uploadedImage1.url" />
-       </div>
+        <DrawPoint :imageSrc="uploadedImage1.url" :points="pointToDraw1" />
+      </div>
 
       <section class="cropper-area" v-if="showResultSection0">
         <div class="img-cropper">
@@ -77,7 +77,7 @@
           -->
         </div>
         <textarea v-model="data" />
-      </section>  
+      </section>
     </div>
   </div>
 </template>
@@ -87,8 +87,7 @@ import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
 import DropZone from "./components/DropZone.vue";
 import { callWebService } from "./services/webServices";
-import DrawPoint from './components/DrawPoint.vue';
-
+import DrawPoint from "./components/DrawPoint.vue";
 
 export default {
   components: {
@@ -104,7 +103,7 @@ export default {
       uploadedImage2: null,
       isButtonActive: false,
       processedImage1: null,
- 
+      pointToDraw1: [],
     };
   },
   methods: {
@@ -164,6 +163,15 @@ export default {
         .then((points) => {
           console.log(points);
           // Faites ce que vous voulez avec les résultats ici
+          this.pointToDraw1 = points.map((point) => {
+            return {
+              color: point.color,
+              initialX: point.x1,
+              initialY: point.y1,
+              x: point.x1,
+              y: point.y1,
+            };
+          });
         })
         .catch((error) => {
           // Gérez l'erreur ici
@@ -264,5 +272,4 @@ textarea {
   height: calc(372px * (9 / 16));
   overflow: hidden;
 }
-
 </style>
