@@ -30,7 +30,11 @@
         </button>
       </section>
 
-      <section class="cropper-area" v-if="showResultSection">
+      <div v-if="showResultSection">
+        <DrawPoint :imageSrc="uploadedImage1.url" />
+       </div>
+
+      <section class="cropper-area" v-if="showResultSection0">
         <div class="img-cropper">
           <p>Image 1:</p>
 
@@ -49,14 +53,14 @@
           />
         </div>
       </section>
-      <section class="preview-area" v-if="showResultSection">
+      <section class="preview-area" v-if="showResultSection0">
         <p>Preview</p>
         <div class="preview" />
 
         <div class="actions">
           <a href="#" role="button" @click.prevent="reset"> Reset </a>
           <!--
-<a
+          <a
             href="#"
             role="button"
             @click.prevent="getCropBoxData"
@@ -73,7 +77,7 @@
           -->
         </div>
         <textarea v-model="data" />
-      </section>
+      </section>  
     </div>
   </div>
 </template>
@@ -83,11 +87,14 @@ import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
 import DropZone from "./components/DropZone.vue";
 import { callWebService } from "./services/webServices";
+import DrawPoint from './components/DrawPoint.vue';
+
 
 export default {
   components: {
     VueCropper,
     DropZone,
+    DrawPoint,
   },
   data() {
     return {
@@ -97,6 +104,7 @@ export default {
       uploadedImage2: null,
       isButtonActive: false,
       processedImage1: null,
+ 
     };
   },
   methods: {
@@ -256,4 +264,5 @@ textarea {
   height: calc(372px * (9 / 16));
   overflow: hidden;
 }
+
 </style>
