@@ -7,7 +7,7 @@
     <hr />
 
     <div class="content">
-      <section v-if="!showResultSection">
+      <section v-if="showResultSection">
         <div class="drop-zone-container">
           <DropZone
             :label="'Zone de dépôt 1'"
@@ -30,8 +30,8 @@
         </button>
       </section>
 
-      <div v-if="showResultSection">
-        <DrawPoint :imageSrc="uploadedImage1.url" :points="pointToDraw1" />
+      <div v-if="!showResultSection">
+        <DrawPoint />
       </div>
 
       <section class="cropper-area" v-if="showResultSection0">

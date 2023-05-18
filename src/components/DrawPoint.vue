@@ -52,21 +52,12 @@
 
 <script>
 import { defineComponent } from "vue";
+import { callWebService } from "../services/webServices";
 
 export default defineComponent({
   name: "DrawPoint",
 
-  props: {
-    imageSrc: {
-      type: String,
-      required: true,
-    },
-    points: {
-      type: Array,
-      required: true,
-    },
-  },
-
+ 
   data() {
     return {
       imageWidth: 0,
@@ -75,41 +66,54 @@ export default defineComponent({
       offsetX: 0,
       offsetY: 0,
       newPoints: [],
+      points: [],
     };
   },
 
   mounted() {
-    const image = new Image();
-    image.src = this.imageSrc;
-    image.onload = () => {
-      this.imageWidth = image.width;
-      this.imageHeight = image.height;
+    callWebService()
+        .then((points) => {
+         // console.log(points);
+          // Faites ce que vous voulez avec les résultats ici
+          this.points = points.slice(0, 5).map((point) => {
+            return {
+              color: point.color,
+              initialX: point.x1,
+              initialY: point.y1,
+              x: point.x1,
+              y: point.y1,
+            };
+          });
+        })
+        .catch((error) => {
+          // Gérez l'erreur ici
+        });
+
+    this.canvas = this.$refs.canvas;
+    this.context = this.canvas.getContext("2d");
+
+    this.image = new Image();
+    this.image.src = "/assets/images/right.jpg";
+    this.image.onload = () => {
+      this.canvas.width = this.image.width;
+      this.canvas.height = this.image.height;
+      this.context.drawImage(this.image, 0, 0);
       this.drawPoints();
     };
   },
 
   methods: {
     drawPoints() {
-      const canvas = this.$refs.canvas;
-      const context = canvas.getContext("2d");
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.context.drawImage(this.image, 0, 0);
 
-      // Clear canvas
-      context.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw the image
-      const image = new Image();
-      image.src = this.imageSrc;
-      image.onload = () => {
-        context.drawImage(image, 0, 0);
-
-        // Draw the points
-        this.points.forEach((point) => {
-          context.fillStyle = point.color;
-          context.beginPath();
-          context.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-          context.fill();
-        });
-      };
+      // Draw the points
+      this.points.forEach((point) => {
+        this.context.fillStyle = point.color;
+        this.context.beginPath();
+        this.context.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+        this.context.fill();
+      });
     },
 
     handleMouseDown(event) {
