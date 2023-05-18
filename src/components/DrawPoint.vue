@@ -14,7 +14,7 @@
           <th>Color</th>
           <th>Initial Coordinates</th>
           <th>Final Coordinates</th>
-          <th>Action</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -28,16 +28,25 @@
           <td>{{ `(${point.initialX}, ${point.initialY})` }}</td>
           <td>{{ `(${point.x}, ${point.y})` }}</td>
           <td>
-            <button @click="resetMove(point.color)">
-              Reset
-            </button>
-            <button @click="deletePoint(point.color)">
-              Delete
-            </button>
+            <span
+              class="material-icons hover-green"
+              @click="resetMove(point.color)"
+              >undo</span
+            >
+            <span
+              class="material-icons hover-red"
+              @click="deletePoint(point.color)"
+              >delete</span
+            >
           </td>
         </tr>
       </tbody>
     </table>
+
+    <button @click="submitNewPoint" class="submit-button">
+      <span class="text">Submit</span>  
+      <span class="material-icons">send</span>
+    </button>
   </div>
 </template>
   
@@ -65,6 +74,7 @@ export default defineComponent({
       selectedPoint: null,
       offsetX: 0,
       offsetY: 0,
+      newPoints: [],
     };
   },
 
@@ -140,35 +150,42 @@ export default defineComponent({
     },
 
     resetMove(color) {
-    // Filtrer les points avec le code couleur spécifié et mettre à jour leurs coordonnées
-    this.points.forEach(point => {
-      if (point.color === color) {
-        point.x = point.initialX;
-        point.y = point.initialY;
+      // Filtrer les points avec le code couleur spécifié et mettre à jour leurs coordonnées
+      this.points.forEach((point) => {
+        if (point.color === color) {
+          point.x = point.initialX;
+          point.y = point.initialY;
+        }
+      });
+
+      // Redessiner les points
+      this.drawPoints();
+    },
+
+    deletePoint(color) {
+      // Rechercher l'index du point à supprimer
+      const index = this.points.findIndex((point) => point.color === color);
+
+      // Vérifier si le point a été trouvé
+      if (index !== -1) {
+        // Supprimer le point de la liste
+        this.points.splice(index, 1);
       }
-    });
 
-    // Redessiner les points
-    this.drawPoints();
-  },
+      // Redessiner les points
+      this.drawPoints();
+    },
 
-
-  deletePoint(color) {
-  // Rechercher l'index du point à supprimer
-  const index = this.points.findIndex((point) => point.color === color);
-
-  // Vérifier si le point a été trouvé
-  if (index !== -1) {
-    // Supprimer le point de la liste
-    this.points.splice(index, 1);
-  }
-
-  // Redessiner les points
-  this.drawPoints();
-},
-
-
-
+    submitNewPoint() {
+      this.newPoints = this.points.map((point) => {
+        return {
+          color: point.color,
+          x: point.x,
+          y: point.y,
+        };
+      });
+      console.log(JSON.stringify(this.newPoints, null, "  "));
+    },
   },
 });
 </script>
@@ -195,5 +212,20 @@ td {
   display: inline-block;
   border-radius: 50%;
 }
+
+.hover-red:hover {
+  color: red;
+}
+
+.hover-green:hover {
+  color: green;
+}
+
+.submit-button {
+  margin-top: 20px; 
+  margin: 20px auto;
+  display: flex;
+			align-items: center;
+} 
 </style>
   
