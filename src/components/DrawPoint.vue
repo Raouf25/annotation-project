@@ -60,12 +60,11 @@
 
 <script>
 import { defineComponent } from "vue";
-import { callWebService } from "../services/webServices";
+import pointsData from "../../assets/points.json";
 
 export default defineComponent({
   name: "DrawPoint",
 
- 
   data() {
     return {
       imageWidth: 0,
@@ -80,29 +79,21 @@ export default defineComponent({
   },
 
   mounted() {
-    callWebService()
-        .then((points) => {
-         // console.log(points);
-          // Faites ce que vous voulez avec les résultats ici
-          this.points = points.slice(0, 15).map((point) => {
-            return {
-              color: point.color,
-              initialX: point.x1,
-              initialY: point.y1,
-              x: point.x1,
-              y: point.y1,
+    // Fetch the JSON data from the file
+    this.points = pointsData.slice(0, 18).map((point) => {
+      return {
+        color: point.color,
+        initialX: point.x1,
+        initialY: point.y1,
+        x: point.x1,
+        y: point.y1,
 
-              initialX2: point.x2,
-              initialY2: point.y2,
-              x2: point.x2,
-              y2: point.y2,
-
-            };
-          });
-        })
-        .catch((error) => {
-          // Gérez l'erreur ici
-        });
+        initialX2: point.x2,
+        initialY2: point.y2,
+        x2: point.x2,
+        y2: point.y2,
+      };
+    });
 
     this.canvas = this.$refs.canvas;
     this.context = this.canvas.getContext("2d");
@@ -142,7 +133,7 @@ export default defineComponent({
         this.context.arc(point.x, point.y, 5, 0, 2 * Math.PI);
         this.context.fill();
       });
-//__
+      //__
       this.context2.clearRect(0, 0, this.canvas2.width, this.canvas2.height);
       this.context2.drawImage(this.image2, 0, 0);
 
@@ -176,25 +167,24 @@ export default defineComponent({
     },
 
     handleMouseDown2(event) {
-  const canvas2 = this.$refs.canvas2;
-  const rect = canvas2.getBoundingClientRect();
-  const mouseX = event.clientX - rect.left;
-  const mouseY = event.clientY - rect.top;
+      const canvas2 = this.$refs.canvas2;
+      const rect = canvas2.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
 
-  for (let i = 0; i < this.points.length; i++) {
-    const point = this.points[i];
-    const distance = Math.sqrt(
-      (mouseX - point.x2) ** 2 + (mouseY - point.y2) ** 2
-    );
-    if (distance <= 5) {
-      this.selectedPoint2 = point;
-      this.offsetX = mouseX - point.x2;
-      this.offsetY = mouseY - point.y2;
-      return;
-    }
-  }
-},
-
+      for (let i = 0; i < this.points.length; i++) {
+        const point = this.points[i];
+        const distance = Math.sqrt(
+          (mouseX - point.x2) ** 2 + (mouseY - point.y2) ** 2
+        );
+        if (distance <= 5) {
+          this.selectedPoint2 = point;
+          this.offsetX = mouseX - point.x2;
+          this.offsetY = mouseY - point.y2;
+          return;
+        }
+      }
+    },
 
     handleMouseMove(event) {
       if (this.selectedPoint) {
@@ -207,19 +197,18 @@ export default defineComponent({
         this.drawPoints();
       }
     },
-    
 
     handleMouseMove2(event) {
-  if (this.selectedPoint2) {
-    const canvas2 = this.$refs.canvas2;
-    const rect = canvas2.getBoundingClientRect();
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
-    this.selectedPoint2.x2 = mouseX - this.offsetX;
-   // this.selectedPoint2.y2 = mouseY - this.offsetY;
-    this.drawPoints();
-  }
-},
+      if (this.selectedPoint2) {
+        const canvas2 = this.$refs.canvas2;
+        const rect = canvas2.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        this.selectedPoint2.x2 = mouseX - this.offsetX;
+        // this.selectedPoint2.y2 = mouseY - this.offsetY;
+        this.drawPoints();
+      }
+    },
 
     handleMouseUp() {
       this.selectedPoint = null;
