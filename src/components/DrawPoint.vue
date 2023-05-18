@@ -14,6 +14,7 @@
           <th>Color</th>
           <th>Initial Coordinates</th>
           <th>Final Coordinates</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -26,6 +27,14 @@
           </td>
           <td>{{ `(${point.initialX}, ${point.initialY})` }}</td>
           <td>{{ `(${point.x}, ${point.y})` }}</td>
+          <td>
+            <button @click="resetMove(point.color)">
+              Reset
+            </button>
+            <button @click="deletePoint(point.color)">
+              Delete
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -65,8 +74,9 @@ export default defineComponent({
     image.onload = () => {
       this.imageWidth = image.width;
       this.imageHeight = image.height;
-      this.drawPoints();
+      //this.drawPoints();
     };
+    this.drawPoints();
   },
 
   methods: {
@@ -128,6 +138,37 @@ export default defineComponent({
     handleMouseUp() {
       this.selectedPoint = null;
     },
+
+    resetMove(color) {
+    // Filtrer les points avec le code couleur spécifié et mettre à jour leurs coordonnées
+    this.points.forEach(point => {
+      if (point.color === color) {
+        point.x = point.initialX;
+        point.y = point.initialY;
+      }
+    });
+
+    // Redessiner les points
+    this.drawPoints();
+  },
+
+
+  deletePoint(color) {
+  // Rechercher l'index du point à supprimer
+  const index = this.points.findIndex((point) => point.color === color);
+
+  // Vérifier si le point a été trouvé
+  if (index !== -1) {
+    // Supprimer le point de la liste
+    this.points.splice(index, 1);
+  }
+
+  // Redessiner les points
+  this.drawPoints();
+},
+
+
+
   },
 });
 </script>

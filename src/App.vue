@@ -163,7 +163,7 @@ export default {
         .then((points) => {
           console.log(points);
           // Faites ce que vous voulez avec les résultats ici
-          this.pointToDraw1 = points.map((point) => {
+          this.pointToDraw1 = points.slice(0,5).map((point) => {
             return {
               color: point.color,
               initialX: point.x1,
