@@ -1,56 +1,56 @@
 <template>
-  <div>
-    <canvas
-      ref="canvas"
-      :width="imageWidth"
-      :height="imageHeight"
-      @mousedown="handleMouseDown"
-      @mousemove="handleMouseMove"
-      @mouseup="handleMouseUp"
-    ></canvas>
-    <table>
-      <thead>
-        <tr>
-          <th>Color</th>
-          <th>Initial Coordinates</th>
-          <th>Final Coordinates</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(point, index) in points" :key="index">
-          <td>
-            <span
-              class="color-dot"
-              :style="{ backgroundColor: point.color }"
-            ></span>
-          </td>
-          <td>{{ `(${point.initialX}, ${point.initialY})` }}</td>
-          <td>{{ `(${point.x}, ${point.y})` }}</td>
-          <td>
-            <span
-              class="material-icons hover-green"
-              @click="resetMove(point.color)"
-              >undo</span
-            >
-            <span
-              class="material-icons hover-red"
-              @click="deletePoint(point.color)"
-              >delete</span
-            >
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="container">
+    <div class="image-container">
+      <canvas
+        ref="canvas"
+        :width="imageWidth"
+        :height="imageHeight"
+        @mousedown="handleMouseDown"
+        @mousemove="handleMouseMove"
+        @mouseup="handleMouseUp"
+      ></canvas>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Color</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(point, index) in points" :key="index">
+            <td>
+              <span
+                class="color-dot"
+                :style="{ backgroundColor: point.color }"
+              ></span>
+            </td>
+            <td>
+              <span
+                class="material-icons hover-green"
+                @click="resetMove(point.color)"
+                >undo</span
+              >
+              <span
+                class="material-icons hover-red"
+                @click="deletePoint(point.color)"
+                >delete</span
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-    <button @click="submitNewPoint" class="submit-button">
-      <span class="text">Submit</span>  
-      <span class="material-icons">send</span>
-    </button>
+      <button @click="submitNewPoint" class="submit-button">
+        <span class="text">Submit</span>
+        <span class="material-icons">send</span>
+      </button>
+    </div>
   </div>
 </template>
-  
-  <script>
+
+<script>
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -84,9 +84,8 @@ export default defineComponent({
     image.onload = () => {
       this.imageWidth = image.width;
       this.imageHeight = image.height;
-      //this.drawPoints();
+      this.drawPoints();
     };
-    this.drawPoints();
   },
 
   methods: {
@@ -150,7 +149,7 @@ export default defineComponent({
     },
 
     resetMove(color) {
-      // Filtrer les points avec le code couleur spécifié et mettre à jour leurs coordonnées
+      // Filter the points with the specified color code and update their coordinates
       this.points.forEach((point) => {
         if (point.color === color) {
           point.x = point.initialX;
@@ -158,21 +157,21 @@ export default defineComponent({
         }
       });
 
-      // Redessiner les points
+      // Redraw the points
       this.drawPoints();
     },
 
     deletePoint(color) {
-      // Rechercher l'index du point à supprimer
+      // Find the index of the point to delete
       const index = this.points.findIndex((point) => point.color === color);
 
-      // Vérifier si le point a été trouvé
+      // Check if the point was found
       if (index !== -1) {
-        // Supprimer le point de la liste
+        // Remove the point from the list
         this.points.splice(index, 1);
       }
 
-      // Redessiner les points
+      // Redraw the points
       this.drawPoints();
     },
 
@@ -189,14 +188,21 @@ export default defineComponent({
   },
 });
 </script>
-  
-  <style>
+
+<style>
+.container {
+  display: flex;
+}
+
+.image-container {
+  margin-right: 20px;
+}
+
 canvas {
   border: 1px solid #000;
 }
 
 table {
-  margin-top: 20px;
   border-collapse: collapse;
 }
 
@@ -222,10 +228,12 @@ td {
 }
 
 .submit-button {
-  margin-top: 20px; 
-  margin: 20px auto;
+  margin-top: 20px;
   display: flex;
-			align-items: center;
-} 
+  align-items: center;
+}
+
+.text {
+  margin-right: 5px;
+}
 </style>
-  

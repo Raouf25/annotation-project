@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="site">
     <div class="header">
       <h2>Annotation Project</h2>
       <!--a href="https://github.com/Raouf25/annotation-project">Github</a-->
@@ -78,6 +78,10 @@
         </div>
         <textarea v-model="data" />
       </section>
+    </div>
+
+    <div class="footer">
+      <p>© 2023 Makhlouf Company. All rights reserved.</p>
     </div>
   </div>
 </template>
@@ -163,7 +167,7 @@ export default {
         .then((points) => {
           console.log(points);
           // Faites ce que vous voulez avec les résultats ici
-          this.pointToDraw1 = points.slice(0,5).map((point) => {
+          this.pointToDraw1 = points.slice(0, 5).map((point) => {
             return {
               color: point.color,
               initialX: point.x1,
@@ -208,6 +212,7 @@ body {
 }
 
 .content {
+  flex: 1;
   display: flex;
   justify-content: space-between;
 }
@@ -271,5 +276,18 @@ textarea {
   width: 100%;
   height: calc(372px * (9 / 16));
   overflow: hidden;
+}
+
+.site {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.footer {
+  padding: 10px;
+  text-align: right;
+  border-top: 1px solid #ccc;
+  font-size: 12px;
 }
 </style>
