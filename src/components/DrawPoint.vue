@@ -60,7 +60,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import pointsData from "../../assets/points.json";
+//import pointsData from "/public/points.json";
 
 export default defineComponent({
   name: "DrawPoint",
@@ -80,19 +80,23 @@ export default defineComponent({
 
   mounted() {
     // Fetch the JSON data from the file
-    this.points = pointsData.slice(0, 18).map((point) => {
-      return {
-        color: point.color,
-        initialX: point.x1,
-        initialY: point.y1,
-        x: point.x1,
-        y: point.y1,
-
-        initialX2: point.x2,
-        initialY2: point.y2,
-        x2: point.x2,
-        y2: point.y2,
-      };
+    fetch("/assets/points.json") // Modifiez l'URL selon votre configuration de serveur
+    .then(response => response.json())
+    .then(data => {
+      this.points = data.slice(0, 18).map((point) => {
+        return {
+          color: point.color,
+          initialX: point.x1,
+          initialY: point.y1,
+          x: point.x1,
+          y: point.y1,
+  
+          initialX2: point.x2,
+          initialY2: point.y2,
+          x2: point.x2,
+          y2: point.y2,
+        };
+      })
     });
 
     this.canvas = this.$refs.canvas;
