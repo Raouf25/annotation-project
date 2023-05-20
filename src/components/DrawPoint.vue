@@ -80,13 +80,13 @@ export default defineComponent({
 
   mounted() {
     // Fetch the JSON data from the file
-    this.points = pointsData.slice(0, 18).map((point) => {
+    this.points = pointsData.slice(0, 5).map((point) => {
       return {
         color: point.color,
         initialX: point.x1,
         initialY: point.y1,
-        x: point.x1,
-        y: point.y1,
+        x1: point.x1,
+        y1: point.y1,
 
         initialX2: point.x2,
         initialY2: point.y2,
@@ -126,19 +126,16 @@ export default defineComponent({
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.context.drawImage(this.image, 0, 0);
 
-      // Draw the points
-      this.points.forEach((point) => {
-        this.context.fillStyle = point.color;
-        this.context.beginPath();
-        this.context.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-        this.context.fill();
-      });
-      //__
       this.context2.clearRect(0, 0, this.canvas2.width, this.canvas2.height);
       this.context2.drawImage(this.image2, 0, 0);
 
       // Draw the points
       this.points.forEach((point) => {
+        this.context.fillStyle = point.color;
+        this.context.beginPath();
+        this.context.arc(point.x1, point.y1, 5, 0, 2 * Math.PI);
+        this.context.fill();
+
         this.context2.fillStyle = point.color;
         this.context2.beginPath();
         this.context2.arc(point.x2, point.y2, 5, 0, 2 * Math.PI);
@@ -155,12 +152,12 @@ export default defineComponent({
       for (let i = 0; i < this.points.length; i++) {
         const point = this.points[i];
         const distance = Math.sqrt(
-          (mouseX - point.x) ** 2 + (mouseY - point.y) ** 2
+          (mouseX - point.x1) ** 2 + (mouseY - point.y1) ** 2
         );
         if (distance <= 5) {
           this.selectedPoint = point;
-          this.offsetX = mouseX - point.x;
-          this.offsetY = mouseY - point.y;
+          this.offsetX = mouseX - point.x1;
+          this.offsetY = mouseY - point.y1;
           return;
         }
       }
@@ -192,8 +189,10 @@ export default defineComponent({
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
-        this.selectedPoint.x = mouseX - this.offsetX;
-        this.selectedPoint.y = mouseY - this.offsetY;
+        this.selectedPoint.x1 = mouseX - this.offsetX;
+        this.selectedPoint.y1 = mouseY - this.offsetY;
+
+        this.selectedPoint.y2 = mouseY - this.offsetY;
         this.drawPoints();
       }
     },
@@ -204,8 +203,8 @@ export default defineComponent({
         const rect = canvas2.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
-        this.selectedPoint2.x2 = mouseX - this.offsetX;
-        // this.selectedPoint2.y2 = mouseY - this.offsetY;
+       // this.selectedPoint2.x2 = mouseX - this.offsetX;
+        this.selectedPoint2.y2 = mouseY - this.offsetY;
         this.drawPoints();
       }
     },
@@ -219,8 +218,8 @@ export default defineComponent({
       // Filter the points with the specified color code and update their coordinates
       this.points.forEach((point) => {
         if (point.color === color) {
-          point.x = point.initialX;
-          point.y = point.initialY;
+          point.x1 = point.initialX;
+          point.y1 = point.initialY;
           point.x2 = point.initialX2;
           point.y2 = point.initialY2;
         }
