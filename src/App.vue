@@ -6,6 +6,7 @@
     <hr />
 
     <div class="content">
+      <Zoomer/>
       <DrawPoint />
     </div>
 
@@ -18,10 +19,12 @@
 <script>
  
 import DrawPoint from "./components/DrawPoint.vue";
+import Zoomer from "./components/Zoomer.vue";
 
 export default {
   components: {
     DrawPoint,
+    Zoomer,
   },
  
 };
