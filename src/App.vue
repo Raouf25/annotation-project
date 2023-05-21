@@ -6,7 +6,7 @@
     <hr />
 
     <div class="content">
-      <Zoomer/>
+      <!--Zoomer/-->
       <DrawPoint />
     </div>
 

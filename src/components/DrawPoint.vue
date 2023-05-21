@@ -8,6 +8,7 @@
         @mousedown="handleMouseDown"
         @mousemove="handleMouseMove"
         @mouseup="handleMouseUp"
+        @wheel="zoomdezoom"
       ></canvas>
       <canvas
         ref="canvas2"
@@ -75,6 +76,8 @@ export default defineComponent({
       offsetY: 0,
       newPoints: [],
       points: [],
+      zoomFactor: 1,
+      zoomIncrement: 0.1,
     };
   },
 
@@ -255,6 +258,44 @@ export default defineComponent({
       });
       console.log(JSON.stringify(this.newPoints, null, "  "));
     },
+
+    zoomdezoom(event) {
+      event.preventDefault();
+      const delta = event.deltaY || event.detail || event.wheelDelta;
+
+      const mouseX = event.clientX - this.canvas.getBoundingClientRect().left;
+      const mouseY = event.clientY - this.canvas.getBoundingClientRect().top;
+
+      const zoomRatioX = mouseX / this.canvas.width;
+      const zoomRatioY = mouseY / this.canvas.height;
+
+
+      if (delta < 0) {
+        this.zoomFactor += this.zoomIncrement;
+      } else {
+        this.zoomFactor -= this.zoomIncrement;
+      }
+
+      this.zoomFactor = Math.max(1, this.zoomFactor);
+      this.zoomFactor = Math.min(30, this.zoomFactor);
+
+      const zoomedWidth = this.image.width * this.zoomFactor;
+      const zoomedHeight = this.image.height * this.zoomFactor;
+
+      const offsetX = mouseX - zoomRatioX * zoomedWidth;
+      const offsetY = mouseY - zoomRatioY * zoomedHeight;
+
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.context.translate(offsetX, offsetY);
+      this.context.drawImage(this.image, 0, 0, zoomedWidth, zoomedHeight);
+      this.context.translate(-offsetX, -offsetY);
+
+      this.context2.clearRect(0, 0, this.canvas2.width, this.canvas2.height);
+      this.context2.translate(offsetX, offsetY);
+      this.context2.drawImage(this.image2, 0, 0, zoomedWidth, zoomedHeight);
+      this.context2.translate(-offsetX, -offsetY);
+    },
+
   },
 });
 </script>
