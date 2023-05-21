@@ -206,8 +206,8 @@ export default defineComponent({
         const rect = canvas2.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
-       // this.selectedPoint2.x2 = mouseX - this.offsetX;
-        this.selectedPoint2.y2 = mouseY - this.offsetY;
+        this.selectedPoint2.x2 = mouseX - this.offsetX;
+       // this.selectedPoint2.y2 = mouseY - this.offsetY;
         this.drawPoints();
       }
     },
