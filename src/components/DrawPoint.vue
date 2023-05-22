@@ -207,7 +207,7 @@ export default defineComponent({
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
         this.selectedPoint2.x2 = mouseX - this.offsetX;
-       // this.selectedPoint2.y2 = mouseY - this.offsetY;
+        // this.selectedPoint2.y2 = mouseY - this.offsetY;
         this.drawPoints();
       }
     },
@@ -269,7 +269,6 @@ export default defineComponent({
       const zoomRatioX = mouseX / this.canvas.width;
       const zoomRatioY = mouseY / this.canvas.height;
 
-
       if (delta < 0) {
         this.zoomFactor += this.zoomIncrement;
       } else {
@@ -288,14 +287,37 @@ export default defineComponent({
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.context.translate(offsetX, offsetY);
       this.context.drawImage(this.image, 0, 0, zoomedWidth, zoomedHeight);
+      this.points.forEach((point) => {
+        this.context.fillStyle = point.color;
+        this.context.beginPath();
+        this.context.arc(
+          point.x1 * this.zoomFactor,
+          point.y1 * this.zoomFactor,
+          5,
+          0,
+          2 * Math.PI
+        );
+        this.context.fill();
+      });
       this.context.translate(-offsetX, -offsetY);
 
       this.context2.clearRect(0, 0, this.canvas2.width, this.canvas2.height);
       this.context2.translate(offsetX, offsetY);
       this.context2.drawImage(this.image2, 0, 0, zoomedWidth, zoomedHeight);
+      this.points.forEach((point) => {
+        this.context2.fillStyle = point.color;
+        this.context2.beginPath();
+        this.context2.arc(
+          point.x2 * this.zoomFactor,
+          point.y2 * this.zoomFactor,
+          5,
+          0,
+          2 * Math.PI
+        );
+        this.context2.fill();
+      });
       this.context2.translate(-offsetX, -offsetY);
     },
-
   },
 });
 </script>
